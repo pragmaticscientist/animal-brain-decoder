@@ -1,5 +1,7 @@
+runs: 2
+
 data:
-  copies: 5
+  copies: 2
   transformations:
     - name: center
       parameters: {}
@@ -68,5 +70,8 @@ training:
   batch_size: 100 #100
   epochs: 2
 
+statistics:
+  stats_output_file: experiments/pointnet_experiment/run_{run}/pointnet_stats.csv
+  predictions_output_file: experiments/pointnet_experiment/run_{run}/pointnet_predictions.csv
 
 
