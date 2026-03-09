@@ -1,20 +1,21 @@
-import argparse
-import yaml
+import hydra
+from omegaconf import DictConfig, OmegaConf
 from src.pipelines import master_pipeline
 
+# The @hydra.main decorator takes over the role of argparse.
+# - config_path points to the directory containing your configs (e.g., 'conf/')
+# - config_name is the default yaml file to load (without the .yaml extension)
+@hydra.main(version_base=None, config_path="conf", config_name="main_conf/diurnality_binary/point_cloud/pointnet")
+def main(cfg: DictConfig):
+    
+    # Optional: If your run_pipeline function requires a standard Python dictionary
+    # rather than a Hydra DictConfig object, you can convert it like this.
+    # The `resolve=True` argument ensures all interpolations (like ${task.name}) are calculated.
+    config_dict = OmegaConf.to_container(cfg, resolve=True)
+    
+    # Run your pipeline
+    master_pipeline.run_pipeline(config_dict)
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run pipelines based on a configuration file.")
-    parser.add_argument(
-        "--config",
-        type=str,
-        required=True,
-        help="Config file in YAML format",
-    )
-
-    args = parser.parse_args()
-    config_file = args.config
-
-    with open(config_file, "r") as f:
-        config = yaml.safe_load(f)
-
-    master_pipeline.run_pipeline(config)
+    # You just call main() directly. Hydra will automatically inject 'cfg'.
+    main()

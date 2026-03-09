@@ -9,6 +9,7 @@ import src.data.dataset as dataset_module
 PATH_VOLUME = "data/raw/allVols.csv"
 PATH_COMMON_TO_SPECIES = "data/raw/animal-species-label-map.txt"
 PATH_DIURNALITY = "data/raw/behaviors/day_night_fixed.csv"
+PATH_DIURNALITY_BINARY = "data/raw/behaviors/day_night_binary.csv"
 PATH_EATING = "data/raw/behaviors/eating-behavior.csv"
 PATH_HABITATS = "data/raw/behaviors/num_of_habitats.csv"
 PATH_SOCIABILITY = "data/raw/behaviors/sociability.csv"
@@ -32,6 +33,7 @@ def load_raw_data():
     common_to_species = data_loader.load_common_to_species(PATH_COMMON_TO_SPECIES)
     # species -> behavior
     diurnality_data = data_loader.load_behavior_data(PATH_DIURNALITY, separator=",")
+    diurnality_binary_data = data_loader.load_behavior_data(PATH_DIURNALITY_BINARY, separator=",")
     eating_data = data_loader.load_behavior_data(PATH_EATING, separator=",")
     habitats_data = data_loader.load_behavior_data(PATH_HABITATS, separator=",")
     sociability_data = data_loader.load_behavior_data(PATH_SOCIABILITY, separator=",")
@@ -41,17 +43,17 @@ def load_raw_data():
     # animal -> brain orientation
     orientation_data = data_loader.load_orientation_data(PATH_ORIENTATION)
 
-    return id_to_pc, id_to_common_name, volume_data, common_to_species, diurnality_data, eating_data, habitats_data, sociability_data, orders_data, orientation_data
+    return id_to_pc, id_to_common_name, volume_data, common_to_species, diurnality_data, diurnality_binary_data, eating_data, habitats_data, sociability_data, orders_data, orientation_data
 
 def load_dataset(copies=1, save_path=None):
-    id_to_pc, id_to_common_name, volume_data, common_to_species, diurnality_data, eating_data, habitats_data, sociability_data, orders_data, orientation_data = load_raw_data()
+    id_to_pc, id_to_common_name, volume_data, common_to_species, diurnality_data, diurnality_binary_data, eating_data, habitats_data, sociability_data, orders_data, orientation_data = load_raw_data()
     data_list = []
-    print(orientation_data)
     for id in id_to_pc.keys():
         print(f"Processing {id}...")
         common_name = id_to_common_name[id]
         species_name = common_to_species.get(common_name)
         diurnality_one_hot, diurnality = diurnality_data.get(species_name, (None, None))
+        diurnality_binary_one_hot, diurnality_binary = diurnality_binary_data.get(species_name, (None, None))
         eating_one_hot, eating = eating_data.get(species_name, (None, None))
         habitats_one_hot, habitats = habitats_data.get(species_name, (None, None))
         sociability_one_hot, sociability = sociability_data.get(species_name, (None, None))
@@ -61,7 +63,7 @@ def load_dataset(copies=1, save_path=None):
         pc_orientation = orientation_data.get(id, None)
     
         fields = [
-            common_name, species_name, diurnality, eating, habitats,
+            common_name, species_name, diurnality, diurnality_binary, eating, habitats,
             sociability, order, ball_volume, normalized_ball_volume,
             brain_volume, normalized_brain_volume, mc_volume, normalized_mc_volume, pc_orientation
             ]
@@ -72,7 +74,7 @@ def load_dataset(copies=1, save_path=None):
             print("===================================================")
             continue
 
-        bundle = Data(x = pc, edge_index = torch.empty(2,0, dtype=torch.long), pc_orientation = pc_orientation, id = id, species = species_name, brain_volume = brain_volume, normalized_brain_volume = normalized_brain_volume, ball_volume = ball_volume, normalized_ball_volume = normalized_ball_volume, mc_volume = mc_volume, normalized_mc_volume = normalized_mc_volume, diurnality_one_hot = diurnality_one_hot, diurnality = diurnality, eating_one_hot = eating_one_hot, eating = eating, habitats_one_hot = habitats_one_hot, habitats = habitats, sociability_one_hot = sociability_one_hot, sociability = sociability, order_one_hot = order_one_hot, order = order)
+        bundle = Data(x = pc, edge_index = torch.empty(2,0, dtype=torch.long), pc_orientation = pc_orientation, id = id, species = species_name, brain_volume = brain_volume, normalized_brain_volume = normalized_brain_volume, ball_volume = ball_volume, normalized_ball_volume = normalized_ball_volume, mc_volume = mc_volume, normalized_mc_volume = normalized_mc_volume, diurnality_one_hot = diurnality_one_hot, diurnality = diurnality, diurnality_binary = diurnality_binary, diurnality_binary_one_hot = diurnality_binary_one_hot, eating_one_hot = eating_one_hot, eating = eating, habitats_one_hot = habitats_one_hot, habitats = habitats, sociability_one_hot = sociability_one_hot, sociability = sociability, order_one_hot = order_one_hot, order = order)
         # save the bundle
         if save_path:
             if not os.path.exists(save_path):

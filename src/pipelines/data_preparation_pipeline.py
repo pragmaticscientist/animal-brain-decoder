@@ -1,6 +1,8 @@
 from src.data.data_module import create_dataset, tailor_dataset
 from src.data import transformations as transformations_module
 from src.data.data_module import load_dataset
+from src.data.split import split_dataset
+
 
 def data_preparation_pipeline(config):
     # Load and preprocess data
@@ -20,7 +22,6 @@ def data_preparation_pipeline(config):
     seed = config['split'].get('seed', None)
     train_ratio = config['split'].get('train_ratio', 0.8)
     
-    from src.data.split import split_dataset
     train_data, test_data = split_dataset(tailored_data, split_type, seed, train_ratio)
 
     # Create datasets

@@ -1,0 +1,3 @@
+input: x # x denotes the point cloud
+output: diurnality
+num_classes: 3

@@ -214,6 +214,7 @@ _TRANSFORMATIONS = {
     'reshape': reshape,
     'random_rotation': random_rotation,
     'change_orientation': change_orientation,
+    'add_jitter': add_jitter,
 }
 
 def get_transformation(transformation_names, params):
