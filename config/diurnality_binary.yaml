@@ -1,0 +1,12 @@
+
+defaults:
+  - /data: point_cloud
+  - /model: pointnet
+  - /task: diurnality_binary
+  - /split: species
+  - /training: default
+  - _self_
+
+statistics:
+  stats_output_file: experiments/${task.output}/${model.type}/run_{run}/mlp_stats.csv
+  predictions_output_file: experiments/${task.output}/${model.type}/run_{run}/mlp_predictions.csv

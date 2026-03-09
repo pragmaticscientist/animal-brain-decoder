@@ -14,6 +14,6 @@ nvidia-smi
 module load conda
 conda activate pt3d
 
-python -m src.main --config config/diurnality_binary/pointnet.yaml
+python -m src.main --config diurnality_binary
 
 echo "Experiment completed!"
