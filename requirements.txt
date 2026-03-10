@@ -4,8 +4,7 @@ numpy==2.4.3
 omegaconf==2.3.0
 pandas==3.0.1
 pysr==1.5.9
-pytorch3d>=0.7.4
-torch>=2.0
-torchvision>=0.15
+pytorch3d==0.7.4
 scikit_learn==1.8.0
+torch==2.10.0
 torch_geometric==2.7.0
