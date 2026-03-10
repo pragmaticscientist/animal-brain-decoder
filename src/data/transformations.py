@@ -169,32 +169,39 @@ def add_jitter(data, scale=1):
 Change orientation of the point cloud to a specified orientation
 """
 
+import torch
+import pytorch3d.transforms as pt3d  # Keep if you want
+
 def change_orientation(data, target_orientation='RL'):
     """
-    Rotate data.pc by 180 degrees horizontally around centroid if data.pc_orientation != target_orientation.
-    
-    Args:
-        data: Object with 'pc' ([200,3] tensor) and 'pc_orientation' (str) attributes.
-        target_orientation: Target string (e.g., 'Left', 'Right').
-    
-    Returns:
-        data with potentially rotated pc.
+    Rotate point cloud 180° around Z-axis (top view) around centroid 
+    if data.pc_orientation != target_orientation.
     """
-    if data.pc_orientation != target_orientation:
-        pc = data.pc  # [200, 3]
-        centroid = pc.mean(dim=0)  # [3]
-        centered = pc - centroid  # [200, 3]
+    if not hasattr(data, 'pc_orientation') or data.pc_orientation != target_orientation:
+        pc = data.x  # [N, 3]
+        centroid = pc.mean(dim=0, keepdim=True)
+        centered = pc - centroid
         
-        # 180 deg horizontal rotation around Y-axis (left-right flip)
-        theta = torch.tensor(180.0 * torch.pi / 180, dtype=pc.dtype, device=pc.device)
-        R_y = pt3d.RotateY(theta).get_matrix()  # [3,3]
+        # Option 1: PyTorch3D (your style)
+        theta = torch.pi  # 180° radians
+        rot_z = pt3d.RotateAxisAngle(theta, axis="Z", degrees=False)
+        R_z_full = rot_z.get_matrix()  # [1,4,4]
+        R_z = R_z_full[:, :3, :3]      # [1,3,3]
+        rotated_centered = torch.bmm(centered.unsqueeze(0), R_z.transpose(-2, -1)).squeeze(0)
         
-        rotated_centered = (centered @ R_y.T)  # [200,3]
-        data.pc = rotated_centered + centroid
+        # Option 2: Direct matrix (lighter, no pt3d needed)
+        # c, s = torch.cos(theta), torch.sin(theta)
+        # R_z = torch.tensor([[c, -s, 0], [s, c, 0], [0, 0, 1]], 
+        #                    dtype=pc.dtype, device=pc.device).unsqueeze(0)
+        # rotated_centered = torch.bmm(centered.unsqueeze(0), R_z.transpose(-2, -1)).squeeze(0)
+        
+        data.x = rotated_centered + centroid
+        data.pc_orientation = target_orientation  # Update attr
     
-        #Update orientation after flip
-        data.pc_orientation = target_orientation
-    
+    return data
+
+def transpose(data):
+    data.x = data.x.T
     return data
 
 """
@@ -215,6 +222,7 @@ _TRANSFORMATIONS = {
     'random_rotation': random_rotation,
     'change_orientation': change_orientation,
     'add_jitter': add_jitter,
+    'transpose': transpose
 }
 
 def get_transformation(transformation_names, params):

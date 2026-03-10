@@ -21,6 +21,11 @@ def training_pipeline(config, model, train_dataset, test_dataset):
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=config['training']['batch_size'], shuffle=True)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=config['training']['batch_size'], shuffle=False)
 
+    print(f"Optimizer: {type(optimizer).__name__}")
+    print(f"Loss Function: {type(criterion).__name__}")
+    print(f"Scheduler: {type(scheduler).__name__}")
+
+
     stats = training_loop(config['training'], model, train_loader, test_loader, optimizer, criterion, scheduler, device)
 
     # save stats
@@ -41,22 +46,22 @@ def get_device(config):
     return device, num_gpus
 
 def get_optimizer(config, model):
-    learning_rate = config.get('learning_rate', 0.001)
-    optimizer_type = config.get('optimizer', 'adam').lower()
-
+    learning_rate = config.get('learning_rate')
+    optimizer_type = config.get('type').lower()
+    weight_decay = config.get('weight_decay', 0.0)
     if optimizer_type == 'adam':
-        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate , weight_decay=weight_decay)
     elif optimizer_type == 'sgd':
-        optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
+        optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, weight_decay=weight_decay)
     else:
         raise ValueError(f"Unknown optimizer type: {optimizer_type}")
 
     return optimizer
 
 def get_scheduler(config, optimizer):
-    scheduler_type = config.get('type', 'plateau').lower()
-    step_size = config.get('scheduler_step_size', 10)
-    gamma = config.get('scheduler_gamma', 0.1)
+    scheduler_type = config.get('type').lower()
+    step_size = config.get('scheduler_step_size')
+    gamma = config.get('scheduler_gamma')
 
     if scheduler_type == 'step':
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
@@ -68,12 +73,14 @@ def get_scheduler(config, optimizer):
     return scheduler
 
 def get_loss_function(config):
-    loss_type = config.get('loss_function', 'cross_entropy').lower()
+    loss_type = config.get('loss').lower()
 
     if loss_type == 'cross_entropy':
         criterion = torch.nn.CrossEntropyLoss()
     elif loss_type == 'mse':
         criterion = torch.nn.MSELoss()
+    elif loss_type == 'nll':
+        criterion = torch.nn.NLLLoss()
     else:
         raise ValueError(f"Unknown loss function type: {loss_type}")
 

@@ -3,20 +3,20 @@ num_classes: ${task.num_classes}
 sa_layers:
   - type: msg
     npoint: 200
-    radius_list: [6, 12, 18]
-    nsample_list: [16, 32, 64]
+    radius_list: [15, 25, 35]
+    nsample_list: [100, 100, 100]
     pos: true
     normals: 0
     mlp_list: [[32, 32, 64], [64, 64, 128], [64, 96, 128]]
   - type: msg
-    npoint: 130
-    radius_list: [6, 12, 18]
-    nsample_list: [12, 18, 24]
+    npoint: 100
+    radius_list: [25, 35, 45]
+    nsample_list: [100, 100, 100]
     pos: true
     normals: 320
     mlp_list: [[64, 64, 128], [128, 128, 256], [128, 128, 256]]
   - type: vanilla
-    npoint: 130
+    npoint: 80
     radius: !!float inf # infinity, this means that all points will be grouped together
     nsample: !!float inf
     pos: true

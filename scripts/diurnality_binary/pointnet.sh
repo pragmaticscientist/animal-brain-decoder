@@ -14,6 +14,6 @@ nvidia-smi
 module load conda
 conda activate pt3d
 
-python -m src.main --config diurnality_binary
+python -m src.main --config-name diurnality_binary
 
 echo "Experiment completed!"

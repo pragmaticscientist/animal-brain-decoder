@@ -45,11 +45,11 @@ def load_raw_data():
 
     return id_to_pc, id_to_common_name, volume_data, common_to_species, diurnality_data, diurnality_binary_data, eating_data, habitats_data, sociability_data, orders_data, orientation_data
 
-def load_dataset(copies=1, save_path=None):
+def load_dataset(save_path=None):
     id_to_pc, id_to_common_name, volume_data, common_to_species, diurnality_data, diurnality_binary_data, eating_data, habitats_data, sociability_data, orders_data, orientation_data = load_raw_data()
     data_list = []
     for id in id_to_pc.keys():
-        print(f"Processing {id}...")
+        #print(f"Processing {id}...")
         common_name = id_to_common_name[id]
         species_name = common_to_species.get(common_name)
         diurnality_one_hot, diurnality = diurnality_data.get(species_name, (None, None))
@@ -69,9 +69,9 @@ def load_dataset(copies=1, save_path=None):
             ]
 
         if not all(field is not None for field in fields):
-            print(f"Skipping {id} due to None values")
-            print(f"common_name: {common_name}, species_name: {species_name}, diurnality: {diurnality}, eating: {eating}, habitats: {habitats}, sociability: {sociability}, order: {order}, ball_volume: {ball_volume}, normalized_ball_volume: {normalized_ball_volume}, brain_volume: {brain_volume}, normalized_brain_volume: {normalized_brain_volume}, mc_volume: {mc_volume}, normalized_mc_volume: {normalized_mc_volume}, pc_orientation: {pc_orientation}")
-            print("===================================================")
+            #print(f"Skipping {id} due to None values")
+            #print(f"common_name: {common_name}, species_name: {species_name}, diurnality: {diurnality}, eating: {eating}, habitats: {habitats}, sociability: {sociability}, order: {order}, ball_volume: {ball_volume}, normalized_ball_volume: {normalized_ball_volume}, brain_volume: {brain_volume}, normalized_brain_volume: {normalized_brain_volume}, mc_volume: {mc_volume}, normalized_mc_volume: {normalized_mc_volume}, pc_orientation: {pc_orientation}")
+            #print("===================================================")
             continue
 
         bundle = Data(x = pc, edge_index = torch.empty(2,0, dtype=torch.long), pc_orientation = pc_orientation, id = id, species = species_name, brain_volume = brain_volume, normalized_brain_volume = normalized_brain_volume, ball_volume = ball_volume, normalized_ball_volume = normalized_ball_volume, mc_volume = mc_volume, normalized_mc_volume = normalized_mc_volume, diurnality_one_hot = diurnality_one_hot, diurnality = diurnality, diurnality_binary = diurnality_binary, diurnality_binary_one_hot = diurnality_binary_one_hot, eating_one_hot = eating_one_hot, eating = eating, habitats_one_hot = habitats_one_hot, habitats = habitats, sociability_one_hot = sociability_one_hot, sociability = sociability, order_one_hot = order_one_hot, order = order)
@@ -82,9 +82,10 @@ def load_dataset(copies=1, save_path=None):
             torch.save(bundle, os.path.join(save_path, id + ".pth"))
         
         data_list.append(bundle)
+        """
         for _ in range(1,copies):
             data_list.append(bundle.clone())
-
+        """
     return data_list
 
 def tailor_dataset(transform_fn, dataset):

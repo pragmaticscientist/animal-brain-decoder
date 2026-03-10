@@ -95,7 +95,6 @@ def load_behavior_data(file_path, separator = ','):
     with open(file_path, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f, delimiter=separator)
         print("Fieldnames:", reader.fieldnames)  # Exact headers
-        print("First row keys:", list(next(reader).keys()))  # If any
         for row in reader:
             species = row["Species"].strip().lower()
             label = row["Char"].strip()

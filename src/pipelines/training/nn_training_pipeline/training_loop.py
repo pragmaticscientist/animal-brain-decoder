@@ -71,7 +71,7 @@ def train_one_epoch(model, train_loader, optimizer, criterion, device):
         loss.backward()
         optimizer.step()
 
-        total_loss += loss.item() 
+        total_loss += loss.item()*input.size(0)  # Multiply by batch size to get total loss for the epoch 
         preds = outputs.argmax(dim=1).cpu().numpy()
         labels = output.cpu().numpy()
         all_preds.extend(preds)
@@ -97,7 +97,7 @@ def evaluate(model, test_loader, criterion, device):
             outputs = model(input)
             loss = criterion(outputs, true_output)
 
-            total_loss += loss.item() 
+            total_loss += loss.item()*input.size(0)  # Multiply by batch size to get total loss for the epoch 
             preds = outputs.argmax(dim=1).cpu().numpy()
             labels = output.cpu().numpy()
             all_preds.extend(preds)
