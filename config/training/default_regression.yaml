@@ -1,0 +1,12 @@
+gpu: true
+optimizer:
+  type: adam
+  learning_rate: 0.001
+  weight_decay: 0
+loss: mse
+scheduler:
+  type: plateau
+  scheduler_step_size: 15
+  scheduler_gamma: 0.1  
+batch_size: 100 #100
+epochs: 100

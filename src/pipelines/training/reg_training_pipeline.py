@@ -1,6 +1,6 @@
 from sklearn.metrics import mean_squared_error
 
-from pipelines.training.helpers import compute_metrics
+from pipelines.training.helpers import compute_classification_metrics, compute_regression_metrics
 
 
 def training_pipeline(config, model, train_dataset, test_dataset):
@@ -33,13 +33,19 @@ def training_pipeline(config, model, train_dataset, test_dataset):
     Y_train_pred = model.predict(X_train)
     Y_test_pred = model.predict(X_test)
     
-    Y_train_pred_class = (Y_train_pred >= 0.5).astype(int)
-    Y_test_pred_class = (Y_test_pred >= 0.5).astype(int)
+    if config['task'].get('num_classes') > 1:
+        Y_train_pred_class = (Y_train_pred >= 0.5).astype(int)
+        Y_test_pred_class = (Y_test_pred >= 0.5).astype(int)
 
     train_loss = mean_squared_error(Y_train, model.predict(X_train))
     test_loss = mean_squared_error(Y_test, model.predict(X_test))
-    train_acc, train_prec, train_rec, train_f1_micro, train_r2 = compute_metrics(Y_train, Y_train_pred_class)
-    test_acc, test_prec, test_rec, test_f1_micro, test_r2 = compute_metrics(Y_test, Y_test_pred_class)
+    
+    if config['task'].get('num_classes') > 1:
+        train_acc, train_prec, train_rec, train_f1_micro, train_r2 = compute_classification_metrics(Y_train, Y_train_pred_class)
+        test_acc, test_prec, test_rec, test_f1_micro, test_r2 = compute_classification_metrics(Y_test, Y_test_pred_class)
+    else:
+        train_acc, train_prec, train_rec, train_f1_micro, train_r2 = compute_regression_metrics(Y_train, Y_train_pred)
+        test_acc, test_prec, test_rec, test_f1_micro, test_r2 = compute_regression_metrics(Y_test, Y_test_pred)
 
     stats["epoch"].append(0)
     stats["train_loss"].append(train_loss)
