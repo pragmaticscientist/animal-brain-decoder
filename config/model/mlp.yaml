@@ -1,6 +1,6 @@
 type: mlp
 mlp_layers:
-- in_channel: 600
+- in_channel: ${data.nfeatures}
   out_channel: 512
   bn: true
   dropout: 0.5

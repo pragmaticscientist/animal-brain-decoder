@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #OAR -l walltime=01:00:00
-#OAR -p cluster=musa
 #OAR -O experiments_%jobid%.out
 #OAR -E experiments_%jobid%.err
 #OAR -n diurnality_pn

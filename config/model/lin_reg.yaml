@@ -1,0 +1,2 @@
+type: linear_regression
+input_size: ${data.nfeatures}

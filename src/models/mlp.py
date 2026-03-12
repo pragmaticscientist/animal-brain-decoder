@@ -22,5 +22,17 @@ class MLP(nn.Module):
 
         self.net = nn.Sequential(*layers)
 
+      # Classification vs regression head
+        if out_chan > 1:
+            self.log_softmax = nn.LogSoftmax(dim=-1)
+        else:
+            self.log_softmax = None
+
     def forward(self, x):
-        return self.net(x)
+        # x already flattened: (B, features)
+        x = self.mlp(x)
+        
+        if self.log_softmax is not None:
+            return self.log_softmax(x)  # (B, num_classes)
+        else:
+            return x.squeeze(-1)  # (B,)

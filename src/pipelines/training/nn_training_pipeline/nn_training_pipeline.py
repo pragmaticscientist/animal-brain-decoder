@@ -26,7 +26,7 @@ def training_pipeline(config, model, train_dataset, test_dataset):
     print(f"Scheduler: {type(scheduler).__name__}")
 
 
-    stats = training_loop(config['training'], model, train_loader, test_loader, optimizer, criterion, scheduler, device)
+    stats = training_loop(config, model, train_loader, test_loader, optimizer, criterion, scheduler, device)
 
     # save stats
     
