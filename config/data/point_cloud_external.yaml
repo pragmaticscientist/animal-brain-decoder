@@ -1,5 +1,6 @@
 copies: 3
-type: point_cloud
+npoint: 100
+type: point_cloud_external
 transformations:
   - name: center
     parameters: {}
@@ -7,8 +8,10 @@ transformations:
     parameters: {}
   - name: add_jitter
     parameters: 
-      scale: 0.5
-  - name: random_rotation
+      scale: 0.5 
+  - name: external_points
+    parameters: {}
+  - name: center
     parameters: {}
   - name: transpose
     parameters: {} # transpose the point cloud 

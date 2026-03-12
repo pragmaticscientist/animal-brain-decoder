@@ -1,0 +1,32 @@
+copies: 3
+nfeatures: 9
+type: point_cloud_front
+transformations:
+  - name: center
+    parameters: {}
+  - name: random_rotation
+    parameters: {}
+  - name: change_orientation
+    parameters:
+      target_orientation: 'LR'
+  - name: singular_values
+    parameters:
+      num_values: 3
+  - name: singular_vectors
+    parameters:
+      num_vectors: 3
+  - name: reshape
+    parameters:
+      shape: [9]
+      attribute: singular_values
+  - name: reshape
+    parameters:
+      shape: [9]
+      attribute: singular_vectors
+  - name: transpose
+    parameters: {} # transpose the point cloud 
+  - name: concat_features
+    parameters:
+      feature1: singular_values
+      feature2: singular_vectors
+      new_feature_name: singular_values_vectors

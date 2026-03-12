@@ -6,7 +6,7 @@ from src.data.split import split_dataset
 
 def data_preparation_pipeline(data_config, split_config, task_config):
     # Load and preprocess data
-    raw_data = load_dataset()
+    raw_data = load_dataset(task_config.get('output'))
     print("===================================================")
     print(f"Dataset length after loading: {len(raw_data)}")
     # Split dataset

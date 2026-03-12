@@ -1,0 +1,20 @@
+type: mlp
+mlp_layers:
+- in_channel: ${data.nfeatures}
+  out_channel: 32
+  bn: true
+  dropout: 0.5
+- in_channel: 32
+  out_channel: 64
+  bn: true
+  dropout: 0.5
+- in_channel: 64
+  out_channel: 64 
+  bn: true
+  dropout: 0.5
+- in_channel: 64
+  out_channel: 32 
+  bn: true
+  dropout: 0.5
+- in_channel: 32
+  out_channel: ${task.num_classes} # this should be equal to num_classes 

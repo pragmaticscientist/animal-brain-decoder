@@ -1,5 +1,6 @@
 copies: 3
-type: point_cloud
+npoint: 100
+type: point_cloud_righthem
 transformations:
   - name: center
     parameters: {}
@@ -7,8 +8,14 @@ transformations:
     parameters: {}
   - name: add_jitter
     parameters: 
-      scale: 0.5
-  - name: random_rotation
+      scale: 0.5 
+  - name: change_orientation
+    parameters:
+      target_orientation: 'LR'  
+  - name: split_by_hemisphere
+    parameters:
+      hemisphere: 'right'
+  - name: center
     parameters: {}
   - name: transpose
     parameters: {} # transpose the point cloud 

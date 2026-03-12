@@ -14,7 +14,7 @@ nvidia-smi
 module load conda
 conda activate pt3d
 
-python -m src.main --config-name diurnality_binary
-python -m src.main --config-name diurnality_binary split=random
+python -m src.main --config-name diurnality_binary data=point_cloud_flat model=mlp training=mlp
+python -m src.main --config-name diurnality_binary data=point_cloud_flat model=mlp training=mlp split=random
 
 echo "Experiment completed!"

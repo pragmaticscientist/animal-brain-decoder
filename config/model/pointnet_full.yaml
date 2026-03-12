@@ -1,0 +1,35 @@
+type: pointnet_pp_cls
+num_classes: ${task.num_classes}
+sa_layers:
+  - type: msg
+    npoint: ${data.npoint}
+    radius_list: [15, 25, 35]
+    nsample_list: [100, 100, 100]
+    pos: true
+    normals: 0
+    mlp_list: [[32, 32, 64], [64, 64, 128], [64, 96, 128]]
+  - type: msg
+    npoint: ${data.npoint}
+    radius_list: [25, 35, 45]
+    nsample_list: [100, 100, 100]
+    pos: true
+    normals: 320
+    mlp_list: [[64, 64, 128], [128, 128, 256], [128, 128, 256]]
+  - type: vanilla
+    npoint: ${data.npoint}
+    radius: !!float inf # infinity, this means that all points will be grouped together
+    nsample: !!float inf
+    pos: true
+    normals: 640
+    mlp_list: [256, 512, 1024]
+mlp_layers:
+- in_channel: 1024
+  out_channel: 512
+  bn: true
+  dropout: 0.4
+- in_channel: 512
+  out_channel: 256
+  bn: true
+  dropout: 0.5
+- in_channel: 256
+  out_channel: ${task.num_classes} 

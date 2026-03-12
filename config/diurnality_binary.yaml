@@ -1,4 +1,3 @@
-
 defaults:
   - /data: point_cloud
   - /model: pointnet
@@ -8,7 +7,7 @@ defaults:
   - _self_
 
 statistics:
-  stats_output_file: experiments/${task.output}/${model.type}/run_{run}/stats.csv
-  predictions_output_file: experiments/${task.output}/${model.type}/run_{run}/predictions.csv
+  stats_output_file: experiments/${task.output}/${data.type}/${model.type}/${split.type}_split/run_{run}/stats.csv
+  predictions_output_file: experiments/${task.output}/${data.type}/${model.type}/${split.type}_split/run_{run}/predictions.csv
 
 runs: 5

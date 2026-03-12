@@ -1,0 +1,21 @@
+copies: 3
+npoint: 100
+type: point_cloud_lefthem
+transformations:
+  - name: center
+    parameters: {}
+  - name: random_rotation
+    parameters: {}
+  - name: add_jitter
+    parameters: 
+      scale: 0.5 
+  - name: change_orientation
+    parameters:
+      target_orientation: 'LR'  # Rotate to left-right orientation
+  - name: split_by_hemisphere
+    parameters:
+      hemisphere: 'left'
+  - name: center
+    parameters: {}
+  - name: transpose
+    parameters: {} # transpose the point cloud 

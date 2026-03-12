@@ -1,0 +1,2 @@
+type: symbolic_regression
+input_size: ${data.nfeatures}

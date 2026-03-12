@@ -1,0 +1,3 @@
+type: random
+seed: 
+train_ratio: 0.8

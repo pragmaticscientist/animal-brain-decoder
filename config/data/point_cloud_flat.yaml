@@ -1,4 +1,6 @@
 copies: 3
+mpoint: 200
+type: point_cloud_flat
 transformations:
   - name: center
     parameters: {}

@@ -1,0 +1,22 @@
+copies: 3
+npoint: 10
+type: point_cloud_back
+transformations:
+  - name: center
+    parameters: {}
+  - name: random_rotation
+    parameters: {}
+  - name: add_jitter
+    parameters: 
+      scale: 0.5 
+  - name: change_orientation
+    parameters:
+      target_orientation: 'LR'
+  - name: isolate_hub_points
+    parameters: 
+      hub_point: middle
+      k: ${npoint}
+  - name: center
+    parameters: {}
+  - name: transpose
+    parameters: {} # transpose the point cloud 

@@ -44,11 +44,11 @@ def divide_point_cloud(data, partition_type):
     n_points = point_cloud.shape[0]
     sorted_indices = torch.argsort(point_cloud[:, 0])
     n_points_per_part = n_points // 3
-    if partition_type == 'front':
+    if partition_type == 'back':
         data_indices = sorted_indices[:n_points_per_part]
     elif partition_type == 'middle':
         data_indices = sorted_indices[n_points_per_part:n_points_per_part*2]
-    elif partition_type == 'back':
+    elif partition_type == 'front':
         data_indices = sorted_indices[n_points_per_part*2:]
     else:
         raise ValueError("Invalid partition type. Choose from 'front', 'middle', 'back'.")
@@ -96,10 +96,10 @@ def isolate_hub_points(data, hub_point, k):
     if isinstance(hub_point, str):
         if hub_point == 'center':
             hub_point = point_cloud.mean(dim=0, keepdim=True)
-        elif hub_point == 'front':
+        elif hub_point == 'back':
             # choose the point with the maximum x value
             hub_point = torch.argmax(point_cloud[:,0])
-        elif hub_point == 'back':
+        elif hub_point == 'front':
             # choose the point with the minimum x value
             hub_point = torch.argmin(point_cloud[:,0])
         else:
@@ -140,9 +140,10 @@ def singular_values(data, num_values):
 Reshape the point cloud to a specified shape
 """
 
-def reshape(data, shape):
-    point_cloud = data.x
-    data.x = point_cloud.view(shape)
+def reshape(data, shape, attribute='x'):
+    """Reshape the specified attribute tensor to new shape."""
+    attr_tensor = getattr(data, attribute)
+    setattr(data, attribute, attr_tensor.view(shape))
     return data
 
 """
@@ -172,7 +173,7 @@ Change orientation of the point cloud to a specified orientation
 import torch
 import pytorch3d.transforms as pt3d  # Keep if you want
 
-def change_orientation(data, target_orientation='RL'):
+def change_orientation(data, target_orientation='LR'):
     """
     Rotate point cloud 180° around Z-axis (top view) around centroid 
     if data.pc_orientation != target_orientation.
@@ -196,12 +197,32 @@ def change_orientation(data, target_orientation='RL'):
         # rotated_centered = torch.bmm(centered.unsqueeze(0), R_z.transpose(-2, -1)).squeeze(0)
         
         data.x = rotated_centered + centroid
+        # swap the first 100 and last 100 points to maintain consistency with hemisphere split
+        if data.x.shape[0] == 200:  # Assuming 200 points total
+            data.x = torch.cat([data.x[100:], data.x[:100]], dim=0)
         data.pc_orientation = target_orientation  # Update attr
     
     return data
 
 def transpose(data):
     data.x = data.x.T
+    return data
+
+
+"""
+Combine two features
+"""
+def concat_features(data, feature1, feature2, new_feature_name):
+    """Concatenate two feature tensors along the last dimension into a new attribute."""
+    feat1 = getattr(data, feature1)
+    feat2 = getattr(data, feature2)
+    
+    # Require compatible shapes except last dim (e.g., (N, D1) + (N, D2) → (N, D1+D2))
+    if feat1.shape[:-1] != feat2.shape[:-1]:
+        raise ValueError(f"Incompatible shapes: {feat1.shape} and {feat2.shape}")
+    
+    combined = torch.cat([feat1, feat2], dim=-1)
+    setattr(data, new_feature_name, combined)
     return data
 
 """
@@ -222,7 +243,8 @@ _TRANSFORMATIONS = {
     'random_rotation': random_rotation,
     'change_orientation': change_orientation,
     'add_jitter': add_jitter,
-    'transpose': transpose
+    'transpose': transpose,
+    'concat_features': concat_features
 }
 
 def get_transformation(transformation_names, params):

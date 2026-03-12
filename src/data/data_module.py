@@ -14,6 +14,7 @@ PATH_EATING = "data/raw/behaviors/eating-behavior.csv"
 PATH_HABITATS = "data/raw/behaviors/num_of_habitats.csv"
 PATH_SOCIABILITY = "data/raw/behaviors/sociability.csv"
 PATH_ORDERS = "data/raw/behaviors/species_with_orders.csv"
+PATH_ORDERS_SMALL = "data/raw/behaviors/species_with_orders_small.csv"
 PATH_POINT_CLOUDS = "data/raw/unaligned_brains/"
 PATH_ORIENTATION = "data/raw/orientation.xlsx"
 
@@ -38,15 +39,16 @@ def load_raw_data():
     habitats_data = data_loader.load_behavior_data(PATH_HABITATS, separator=",")
     sociability_data = data_loader.load_behavior_data(PATH_SOCIABILITY, separator=",")
     orders_data = data_loader.load_behavior_data(PATH_ORDERS, separator=" ")
+    orders_small_data = data_loader.load_behavior_data(PATH_ORDERS_SMALL, separator=" ")
     # id -> point cloud, id -> common name
     id_to_pc, id_to_common_name = data_loader.load_raw_data(PATH_POINT_CLOUDS)
     # animal -> brain orientation
     orientation_data = data_loader.load_orientation_data(PATH_ORIENTATION)
 
-    return id_to_pc, id_to_common_name, volume_data, common_to_species, diurnality_data, diurnality_binary_data, eating_data, habitats_data, sociability_data, orders_data, orientation_data
+    return id_to_pc, id_to_common_name, volume_data, common_to_species, diurnality_data, diurnality_binary_data, eating_data, habitats_data, sociability_data, orders_data, orders_small_data, orientation_data
 
-def load_dataset(save_path=None):
-    id_to_pc, id_to_common_name, volume_data, common_to_species, diurnality_data, diurnality_binary_data, eating_data, habitats_data, sociability_data, orders_data, orientation_data = load_raw_data()
+def load_dataset(output_field, save_path=None):
+    id_to_pc, id_to_common_name, volume_data, common_to_species, diurnality_data, diurnality_binary_data, eating_data, habitats_data, sociability_data, orders_data, orders_small_data, orientation_data = load_raw_data()
     data_list = []
     for id in id_to_pc.keys():
         #print(f"Processing {id}...")
@@ -58,23 +60,33 @@ def load_dataset(save_path=None):
         habitats_one_hot, habitats = habitats_data.get(species_name, (None, None))
         sociability_one_hot, sociability = sociability_data.get(species_name, (None, None))
         order_one_hot, order = orders_data.get(species_name, (None, None))
+        order_small_one_hot, order_small = orders_small_data.get(species_name, (None, None))
         ball_volume, normalized_ball_volume, brain_volume, normalized_brain_volume, mc_volume, normalized_mc_volume = volume_data.get(id)  
         pc = id_to_pc[id]
         pc_orientation = orientation_data.get(id, None)
     
         fields = [
-            common_name, species_name, diurnality, diurnality_binary, eating, habitats,
-            sociability, order, ball_volume, normalized_ball_volume,
-            brain_volume, normalized_brain_volume, mc_volume, normalized_mc_volume, pc_orientation
+            common_name, species_name, pc_orientation
             ]
+        
+        if output_field == 'diurnality_binary':
+            fields.append(diurnality_binary)
+        elif output_field == 'diurnality':
+            fields.append(diurnality)
+        elif output_field == 'order':
+            fields.append(order)
+        elif output_field == 'order_small':
+            fields.append(order_small)
+        elif output_field == 'volume':
+            fields.append(brain_volume)
 
         if not all(field is not None for field in fields):
-            #print(f"Skipping {id} due to None values")
-            #print(f"common_name: {common_name}, species_name: {species_name}, diurnality: {diurnality}, eating: {eating}, habitats: {habitats}, sociability: {sociability}, order: {order}, ball_volume: {ball_volume}, normalized_ball_volume: {normalized_ball_volume}, brain_volume: {brain_volume}, normalized_brain_volume: {normalized_brain_volume}, mc_volume: {mc_volume}, normalized_mc_volume: {normalized_mc_volume}, pc_orientation: {pc_orientation}")
-            #print("===================================================")
+            print(f"Skipping {id} due to None values")
+            print(f"common_name: {common_name}, species_name: {species_name}, diurnality: {diurnality}, eating: {eating}, habitats: {habitats}, sociability: {sociability}, order: {order}, ball_volume: {ball_volume}, normalized_ball_volume: {normalized_ball_volume}, brain_volume: {brain_volume}, normalized_brain_volume: {normalized_brain_volume}, mc_volume: {mc_volume}, normalized_mc_volume: {normalized_mc_volume}, pc_orientation: {pc_orientation}, diurnality_binary: {diurnality_binary}")
+            print("===================================================")
             continue
 
-        bundle = Data(x = pc, edge_index = torch.empty(2,0, dtype=torch.long), pc_orientation = pc_orientation, id = id, species = species_name, brain_volume = brain_volume, normalized_brain_volume = normalized_brain_volume, ball_volume = ball_volume, normalized_ball_volume = normalized_ball_volume, mc_volume = mc_volume, normalized_mc_volume = normalized_mc_volume, diurnality_one_hot = diurnality_one_hot, diurnality = diurnality, diurnality_binary = diurnality_binary, diurnality_binary_one_hot = diurnality_binary_one_hot, eating_one_hot = eating_one_hot, eating = eating, habitats_one_hot = habitats_one_hot, habitats = habitats, sociability_one_hot = sociability_one_hot, sociability = sociability, order_one_hot = order_one_hot, order = order)
+        bundle = Data(x = pc, edge_index = torch.empty(2,0, dtype=torch.long), pc_orientation = pc_orientation, id = id, species = species_name, brain_volume = brain_volume, normalized_brain_volume = normalized_brain_volume, ball_volume = ball_volume, normalized_ball_volume = normalized_ball_volume, mc_volume = mc_volume, normalized_mc_volume = normalized_mc_volume, diurnality_one_hot = diurnality_one_hot, diurnality = diurnality, diurnality_binary = diurnality_binary, diurnality_binary_one_hot = diurnality_binary_one_hot, eating_one_hot = eating_one_hot, eating = eating, habitats_one_hot = habitats_one_hot, habitats = habitats, sociability_one_hot = sociability_one_hot, sociability = sociability, order_one_hot = order_one_hot, order = order, order_small = order_small, order_small_one_hot=order_small_one_hot)
         # save the bundle
         if save_path:
             if not os.path.exists(save_path):
