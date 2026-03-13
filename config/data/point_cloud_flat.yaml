@@ -10,5 +10,5 @@ transformations:
   - name: add_jitter
     parameters: {}
   - name: reshape
-    parameters: {}
-      shape: [600] # flatten the point cloud to a 1D vector of length 600 (3 features * 200 points)
+    parameters: 
+      shape: [600] 

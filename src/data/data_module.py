@@ -81,9 +81,9 @@ def load_dataset(output_field, save_path=None):
             fields.append(brain_volume)
 
         if not all(field is not None for field in fields):
-            print(f"Skipping {id} due to None values")
-            print(f"common_name: {common_name}, species_name: {species_name}, diurnality: {diurnality}, eating: {eating}, habitats: {habitats}, sociability: {sociability}, order: {order}, ball_volume: {ball_volume}, normalized_ball_volume: {normalized_ball_volume}, brain_volume: {brain_volume}, normalized_brain_volume: {normalized_brain_volume}, mc_volume: {mc_volume}, normalized_mc_volume: {normalized_mc_volume}, pc_orientation: {pc_orientation}, diurnality_binary: {diurnality_binary}")
-            print("===================================================")
+            #print(f"Skipping {id} due to None values")
+            #print(f"common_name: {common_name}, species_name: {species_name}, diurnality: {diurnality}, eating: {eating}, habitats: {habitats}, sociability: {sociability}, order: {order}, ball_volume: {ball_volume}, normalized_ball_volume: {normalized_ball_volume}, brain_volume: {brain_volume}, normalized_brain_volume: {normalized_brain_volume}, mc_volume: {mc_volume}, normalized_mc_volume: {normalized_mc_volume}, pc_orientation: {pc_orientation}, diurnality_binary: {diurnality_binary}")
+            #print("===================================================")
             continue
 
         bundle = Data(x = pc, edge_index = torch.empty(2,0, dtype=torch.long), pc_orientation = pc_orientation, id = id, species = species_name, brain_volume = brain_volume, normalized_brain_volume = normalized_brain_volume, ball_volume = ball_volume, normalized_ball_volume = normalized_ball_volume, mc_volume = mc_volume, normalized_mc_volume = normalized_mc_volume, diurnality_one_hot = diurnality_one_hot, diurnality = diurnality, diurnality_binary = diurnality_binary, diurnality_binary_one_hot = diurnality_binary_one_hot, eating_one_hot = eating_one_hot, eating = eating, habitats_one_hot = habitats_one_hot, habitats = habitats, sociability_one_hot = sociability_one_hot, sociability = sociability, order_one_hot = order_one_hot, order = order, order_small = order_small, order_small_one_hot=order_small_one_hot)

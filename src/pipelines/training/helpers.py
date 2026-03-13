@@ -15,7 +15,7 @@ def compute_regression_metrics(true_labels, pred_labels):
     prec = 0
     rec = 0
     f1_micro = 0
-    r2 = r2_score(true_labels, pred_labels)
+    r2 = r2_score(true_labels, [label.detach().numpy() for label in pred_labels])
 
     return acc, prec, rec, f1_micro, r2
 

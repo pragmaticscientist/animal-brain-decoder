@@ -1,13 +1,25 @@
 from sklearn.metrics import mean_squared_error
 
-from pipelines.training.helpers import compute_classification_metrics, compute_regression_metrics
+from src.pipelines.training.helpers import compute_classification_metrics, compute_regression_metrics
 
 
 def training_pipeline(config, model, train_dataset, test_dataset):
-    X_train = [train_dataset[i].input for i in range(len(train_dataset))]
-    X_test = [test_dataset[i].input for i in range(len(test_dataset))]
-    Y_train = [train_dataset[i].output for i in range(len(train_dataset))]
-    Y_test = [test_dataset[i].output for i in range(len(test_dataset))]
+    
+    X_train, Y_train, X_train_ids = [], [], []
+    X_test, Y_test, X_test_ids = [], [], []
+    
+    for i in range(train_dataset.len()):
+        id, input, output = train_dataset.get(i)
+        X_train.append(input)
+        Y_train.append(output)
+        X_train_ids.append(id)
+    
+    for i in range(test_dataset.len()):
+        id, input, output = test_dataset.get(i)
+        X_test.append(input)
+        Y_test.append(output)
+        X_test_ids.append(id)
+
 
     model.fit(X_train, Y_train)
 
@@ -63,9 +75,6 @@ def training_pipeline(config, model, train_dataset, test_dataset):
     stats["learning_rate"].append(None)
     if config['model']['type'] == 'symbolic_regression':
         stats["equation"] = model.latex()
-
-    X_train_ids = [train_dataset[i].id for i in range(len(train_dataset))]
-    X_test_ids = [test_dataset[i].id for i in range(len(test_dataset))]
 
     stats["last_epoch_train_data"] = list(zip(X_train_ids, Y_train, Y_train_pred_class ))
     stats["last_epoch_test_data"] = list(zip(X_test_ids, Y_test, Y_test_pred_class ))  

@@ -2,27 +2,17 @@ from pysr import PySRRegressor
 
 
 def get_symbolic_regression_model(config):
-    
+    sym_regression_config = config['sym_regression']
     model = PySRRegressor(
-        denoise=config['denoising'],              
-        batching=config['batching'],             
-
-        # --- Strict Simplicity ---
-        maxsize=config['maxsize'],                  # Keep it very small. Real laws in 2D are rarely > 18 nodes.
-        maxdepth=config['maxdepth'],                  # Prevent deep nesting
-
-        # --- Robust Loss ---
-        elementwise_loss=config['elementwise_loss'],  # Use L1 (Mean Absolute Error) to ignore outliers
-        
-        
-        # --- Constraints ---
-        binary_operators=config['binary_operators'],
-        unary_operators=config['unary_operators'],
- 
-        
-        # --- Technical ---
-        progress=config['progress'],
-        turbo=config['turbo'],
+        batching=sym_regression_config['batching'],
+        maxdepth=sym_regression_config['maxdepth'],
+        niterations=sym_regression_config['niterations'],
+        elementwise_loss=sym_regression_config['elementwise_loss'],
+        binary_operators=sym_regression_config['binary_operators'],
+        unary_operators=sym_regression_config['unary_operators'],
+        complexity_of_operators=sym_regression_config['complexity_of_operators'],
+        progress=sym_regression_config['progress'],
+        turbo=sym_regression_config['turbo'],
     )
 
     return model

@@ -16,7 +16,7 @@ def training_pipeline(config, model, train_dataset, test_dataset):
     optimizer = get_optimizer(config['training'].get('optimizer'), model)
     criterion = get_loss_function(config['training'])
     scheduler = get_scheduler(config['training'].get('scheduler'), optimizer)
-
+    
      # Data loaders
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=config['training']['batch_size'], shuffle=True)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=config['training']['batch_size'], shuffle=False)
@@ -67,6 +67,8 @@ def get_scheduler(config, optimizer):
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
     elif scheduler_type == 'plateau':
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=gamma, patience=step_size)
+    elif scheduler_type == 'no_scheduler':
+        scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda epoch: 1.0)
     else:
         raise ValueError(f"Unknown scheduler type: {scheduler_type}")
 

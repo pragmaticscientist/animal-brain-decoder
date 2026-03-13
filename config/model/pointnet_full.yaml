@@ -4,14 +4,21 @@ sa_layers:
   - type: msg
     npoint: ${data.npoint}
     radius_list: [15, 25, 35]
-    nsample_list: [100, 100, 100]
+    nsample_list: 
+      - ${data.npoint}
+      - ${data.npoint}
+      - ${data.npoint}
+    
     pos: true
     normals: 0
     mlp_list: [[32, 32, 64], [64, 64, 128], [64, 96, 128]]
   - type: msg
     npoint: ${data.npoint}
     radius_list: [25, 35, 45]
-    nsample_list: [100, 100, 100]
+    nsample_list: 
+      - ${data.npoint}
+      - ${data.npoint}
+      - ${data.npoint}
     pos: true
     normals: 320
     mlp_list: [[64, 64, 128], [128, 128, 256], [128, 128, 256]]

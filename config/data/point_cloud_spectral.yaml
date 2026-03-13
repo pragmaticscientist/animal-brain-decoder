@@ -1,6 +1,6 @@
 copies: 3
 nfeatures: 9
-type: point_cloud_front
+type: point_cloud_spectral
 transformations:
   - name: center
     parameters: {}
@@ -17,7 +17,7 @@ transformations:
       num_vectors: 3
   - name: reshape
     parameters:
-      shape: [9]
+      shape: [3]
       attribute: singular_values
   - name: reshape
     parameters:

@@ -4,5 +4,7 @@ optimizer:
   learning_rate: 0.001
   weight_decay: 0
 loss: cross_entropy
+scheduler:
+  type: no_scheduler
 batch_size: 100 
 epochs: 100

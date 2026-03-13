@@ -74,7 +74,7 @@ def internal_points(data, threshold=0.5):
     n_points = point_cloud.shape[0]
     center = data.x.mean(dim=0, keepdim=True)
     distances = torch.norm(point_cloud - center, dim=1)
-    closest_indices = torch.argsort(distances)[:n_points * threshold]
+    closest_indices = torch.argsort(distances)[:int(n_points * threshold)]
     data.x = point_cloud[closest_indices]
     return data
 
@@ -82,19 +82,18 @@ def internal_points(data, threshold=0.5):
 Isolate all the points that are outside a certain threshold distance from the origin
 """
 def external_points(data, threshold=0.5):
-    internal_data = internal_points(data, 1-threshold)
     point_cloud = data.x
     n_points = point_cloud.shape[0]
     center = data.x.mean(dim=0, keepdim=True)
     distances = torch.norm(point_cloud - center, dim=1)
-    closest_indices = torch.argsort(distances)[n_points * threshold:]
+    closest_indices = torch.argsort(distances)[int(n_points * threshold):]
     data.x = point_cloud[closest_indices]
     return data
 
 def isolate_hub_points(data, hub_point, k):
     point_cloud = data.x 
     if isinstance(hub_point, str):
-        if hub_point == 'center':
+        if hub_point == 'middle':
             hub_point = point_cloud.mean(dim=0, keepdim=True)
         elif hub_point == 'back':
             # choose the point with the maximum x value
@@ -143,7 +142,7 @@ Reshape the point cloud to a specified shape
 def reshape(data, shape, attribute='x'):
     """Reshape the specified attribute tensor to new shape."""
     attr_tensor = getattr(data, attribute)
-    setattr(data, attribute, attr_tensor.view(shape))
+    setattr(data, attribute, attr_tensor.reshape(shape))
     return data
 
 """

@@ -47,7 +47,10 @@ def training_loop(config, model, train_loader, test_loader, optimizer, criterion
         stats["test_r2"].append(test_r2)
         stats["learning_rate"].append(optimizer.param_groups[0]['lr'])
 
-        print(f"Epoch {epoch+1}/{epochs} - Train Loss: {train_loss:.4f}, Test Loss: {test_loss:.4f}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}")
+        if is_classification(config):        
+            print(f"Epoch {epoch+1}/{epochs} - Train Loss: {train_loss:.4f}, Test Loss: {test_loss:.4f}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}")
+        else:
+            print(f"Epoch {epoch+1}/{epochs} - Train Loss: {train_loss:.4f}, Test Loss: {test_loss:.4f}, Train R^2: {train_r2:.4f}, Test R^2: {test_r2:.4f}")
 
         if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
             scheduler.step(test_loss)

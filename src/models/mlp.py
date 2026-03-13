@@ -30,7 +30,7 @@ class MLP(nn.Module):
 
     def forward(self, x):
         # x already flattened: (B, features)
-        x = self.mlp(x)
+        x = self.net(x)
         
         if self.log_softmax is not None:
             return self.log_softmax(x)  # (B, num_classes)

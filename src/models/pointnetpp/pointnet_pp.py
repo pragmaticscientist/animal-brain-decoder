@@ -14,14 +14,14 @@ class pointnet_pp_cls(nn.Module):
         mlp_layers = nn.ModuleList()
         for i in range(n_mlp_layers):
             mlp_config = config['mlp_layers'][i]
-            self.mlp_layers.append(nn.Linear(mlp_config['in_channel'], mlp_config['out_channel']))
+            mlp_layers.append(nn.Linear(mlp_config['in_channel'], mlp_config['out_channel']))
             if 'bn' in mlp_config and mlp_config['bn']:
-                self.mlp_layers.append(nn.BatchNorm1d(mlp_config['out_channel']))
+                mlp_layers.append(nn.BatchNorm1d(mlp_config['out_channel']))
             if 'dropout' in mlp_config:
-                self.mlp_layers.append(nn.Dropout(mlp_config['dropout']))
+                mlp_layers.append(nn.Dropout(mlp_config['dropout']))
         
         self.mlp = nn.Sequential(*mlp_layers)
-        if self.num_classes > 1:
+        if config['num_classes'] > 1:
             self.log_softmax = nn.LogSoftmax(dim=-1)
         else:
             self.log_softmax = None

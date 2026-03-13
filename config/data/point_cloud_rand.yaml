@@ -1,6 +1,6 @@
 copies: 3
 npoint: 10
-type: point_cloud_rand33
+type: point_cloud_rand
 transformations:
   - name: center
     parameters: {}
@@ -18,4 +18,4 @@ transformations:
   - name: center
     parameters: {}
   - name: transpose
-    parameters: {} # transpose the point cloud 
+    parameters: {}

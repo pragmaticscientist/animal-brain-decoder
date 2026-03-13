@@ -1,2 +1,26 @@
 type: symbolic_regression
 input_size: ${data.nfeatures}
+
+sym_regression:
+  batching: false
+  maxdepth: 6
+  niterations: 1000
+  elementwise_loss: "L1DistLoss()"
+  binary_operators:
+    - "+"
+    - "-"
+    - "*"
+    - "/"
+  unary_operators:
+    - exp
+    - inv
+  complexity_of_operators:
+    "+": 3
+    "-": 3
+    "*": 3
+    "/": 3
+    exp: 3
+    inv: 1
+  progress: true
+  turbo: true
+

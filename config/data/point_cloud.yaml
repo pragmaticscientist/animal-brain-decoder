@@ -1,5 +1,6 @@
 copies: 3
 type: point_cloud
+npoint: 200
 transformations:
   - name: center
     parameters: {}
