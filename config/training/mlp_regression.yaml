@@ -2,7 +2,7 @@ gpu: true
 optimizer:
   type: adam
   learning_rate: 0.001
-  weight_decay: 0
+  weight_decay: 0.0001
 loss: mse
 scheduler:
   type: no_scheduler

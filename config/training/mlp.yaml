@@ -2,7 +2,7 @@ gpu: true
 optimizer:
   type: adam
   learning_rate: 0.001
-  weight_decay: 0
+  weight_decay: 0.0001
 loss: cross_entropy
 scheduler:
   type: no_scheduler
